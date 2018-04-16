@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style type="text/css">
+    .error {
+        color: red;
+    }
+</style>
+
+<form action="/newpost" method="POST">
+    <p><h3>Title for your new blog: </h3>
+    <input type="text" name="title"/></label></p>
+        {% if error_title %}
+           <em class="error">{{error_title}}</em>
+        {% endif %}
+    <p><h3><label>Your new Blog: </h3> 
+    <textarea name="body" rows="10" columns="80" ></textarea></label></p>
+        {% if error_body %}
+           <em class="error">{{error_body}}</em>
+        {% endif %}
+    <p><input type="submit" value="Add Entry"/></p>
+
+{% endblock %}

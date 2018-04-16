@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if blogs %}
+    {% for blog in blogs %}
+        <p><a href ="./blog?id={{ blog.id }}" style="font-size:150%"> {{ blog.title }} </a> 
+            <div>{{ blog.body }}</div>
+        </p>
+    {% endfor %}
+{% endif %}
+
+{% endblock %}
