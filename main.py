@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
 import cgi
+from hashutils import make_pw_hash, check_pw_hash
 
 app = Flask(__name__)
 app.config['DEBUG'] = True      # displays runtime errors in the browser, too
@@ -18,12 +19,12 @@ password_confrimation_err = ''
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True)
-    password = db.Column(db.String(120))
+    pw_hash = db.Column(db.String(120))
     blogs = db.relationship('Blog', backref='owner')
 
     def __init__(self, username, password):
         self.username = username
-        self.password = password
+        self.pw_hash = make_pw_hash(password)
 
     def __repr__(self):
         return '<Username %r>' % self.username
@@ -110,6 +111,7 @@ def signup():
             return render_template("signup.html", title='Sign Up for Blogz!', login_check=login_check, user_err=user_err, password_err=password_err, 
                                     password_confirmation_err=password_confirmation_err) 
         else:
+
             new_user = User(username, password)
             db.session.add(new_user)
             db.session.commit()
@@ -124,16 +126,16 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
-        if user and user.password == password:
+        if user and check_pw_hash(password, user.pw_hash):
             session['username'] = username
             newpost_redirect = "/newpost?user=" + str(user.username)
             return redirect(newpost_redirect)
         else:
             if not user:
-                error = "Username does not exist or is incorrect!"
+                error = "username does not exist or is incorrect"
                 return render_template("login.html", title='Blogz!', login_check=login_check, error=error)
-            elif user.password != password:
-                error = "Password is incorrect, try again!"
+            elif not check_pw_hash(password, user.pw_hash):
+                error = "password is incorrect, try again"
                 return render_template("login.html", title='Blogz!', login_check=login_check, error=error)            
 
     return render_template("login.html", title='Blogz!', login_check=login_check)
@@ -161,14 +163,14 @@ def newpost():
         if not body:
             error_body = "Please fill in the body"
         if not title or not body:
-            return render_template('newpost.html', title='Add a Blog', login_check=login_check, error_title=error_title, error_body=error_body)
+            return render_template('newpost.html', title='Add a Blog!', login_check=login_check, error_title=error_title, error_body=error_body)
 
         owner = User.query.filter_by(username=session['username']).first()
         blog = Blog(title, body, owner)
         db.session.add(blog)
         db.session.commit()
 
-        return render_template('ind-blog.html', title="Add a Blog!", login_check=login_check, blog=blog)
+        return render_template('ind-blog.html', title=title, login_check=login_check, blog=blog)
     
     return render_template('newpost.html', title="Add a Blog!", login_check=login_check)
 
