@@ -1,0 +1,2 @@
+http://blogz-demo.appspot.com/css/normalize.css
+http://blogz-demo.appspot.com/css/styles.css

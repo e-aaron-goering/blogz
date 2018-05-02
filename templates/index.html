@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if userlist %}
+    {% for user in userlist %}
+        <ul>
+            <li><a href ="./blog?user={{ user.username }}" style="font-size:150%"> {{ user.username }} </a> 
+            </li>
+        </ul>
+    {% endfor %}
+{% endif %}
+
+{% endblock %}

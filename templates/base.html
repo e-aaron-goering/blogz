@@ -2,13 +2,32 @@
 <html>
     <head>
         <title>{{title}}</title>
+        <link rel="stylesheet" href="http://blogz-demo.appspot.com/css/normalize.css">
+        <link rel="stylesheet" href="http://blogz-demo.appspot.com/css/styles.css">
     </head>
 <body>
-    
-<span><a href="/blog">Main Blog Page</a></span>
-<span><a href="/newpost">Add a Blog Entry</a></span>
+    <nav>
+        <ul id="user-account">
+            {% if not login_check %}
+                <li><a href="/login">login</a></li>
+            {% elif login_check %}
+                <li><a href="/logout">logout</a></li>
+            {% endif %}
+        </ul>
+        <ul>
+            <li><a href="/">home</a></li>
+            <li><a href="/blog">all posts</a></li>
+            <li><a href="/newpost">new post</a></li>
+        </ul>
+    </nav>
 
-<div align="center"><h1>{{title}}</h1></div>
+<style>
+    .error {
+        color: red;
+    }
+</style>
+
+<h1>{{title}}</h1>
 
 
     {% block content %}
